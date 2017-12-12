@@ -1,0 +1,33 @@
+{% extends "row.html" %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+<style>
+#map {
+	margin-top: 1em;
+	width: 100%;
+	height: 400px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+<div id="map"></div>
+<script>
+var pk = location.pathname.split('/').slice(-1)[0];
+var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    detectRetina: true,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
+});
+var sql = 'select AsGeoJSON(Geometry) from timezones where PK_UID = ' + pk;
+fetch('/timezones.json?sql=' + encodeURIComponent(sql)).then(r => r.json()).then(d => {
+	var map = L.map('map', {layers: [tiles]});
+	var geoJSON = JSON.parse(d.rows[0][0]);
+	var layer = L.geoJSON(geoJSON)
+	layer.addTo(map);
+	map.fitBounds(layer.getBounds());
+});
+</script>
+{% endblock %}
