@@ -6,6 +6,11 @@
     "source_url": "https://github.com/evansiroky/timezone-boundary-builder",
     "databases": {
         "timezones": {
+            "tables": {
+                "timezones": {
+                    "sortable_columns": ["tzid"]
+                }
+            },
             "queries": {
                 "by_point": "select tzid\nfrom\n    timezones\nwhere\n    within(GeomFromText('POINT(' || :longitude || ' ' || :latitude || ')'), timezones.Geometry)\n    and rowid in (\n        SELECT pkid FROM idx_timezones_Geometry\n        where xmin < :longitude\n        and xmax > :longitude\n        and ymin < :latitude\n        and ymax > :latitude\n    )"
             }
