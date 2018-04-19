@@ -1,24 +1,34 @@
-    <table>
-        <thead>
-            <tr>
-                {% for column in display_columns %}
-                    <th scope="col">{{ column }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-        {% for row in display_rows %}
-            <tr>
-                {% for cell in row %}
-                    <td>
-                        {% if cell.column == 'Geometry' %}
-                            {{ cell.value|length }} bytes
+<table>
+    <thead>
+        <tr>
+            {% for column in display_columns %}
+                <th class="col-{{ column.name|to_css_class }}" scope="col">
+                    {% if not column.sortable %}
+                        {{ column.name }}
+                    {% else %}
+                        {% if column.name == sort %}
+                            <a href="{{ path_with_added_args(request, {'_sort_desc': column.name, '_sort': None, '_next': None}) }}" rel="nofollow">{{ column.name }}&nbsp;▼</a>
                         {% else %}
-                            {{ cell.value }}
+                            <a href="{{ path_with_added_args(request, {'_sort': column.name, '_sort_desc': None, '_next': None}) }}" rel="nofollow">{{ column.name }}{% if column.name == sort_desc %}&nbsp;▲{% endif %}</a>
                         {% endif %}
-                    </td>
-                {% endfor %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                    {% endif %}
+                </th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in display_rows %}
+        <tr>
+            {% for cell in row %}
+                <td class="col-{{ cell.column|to_css_class }}">
+                    {% if cell.column == 'Geometry' %}
+                        {{ cell.value|length }} bytes
+                    {% else %}
+                        {{ cell.value }}
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

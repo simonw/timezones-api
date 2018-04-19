@@ -6,12 +6,12 @@ RUN apt install -y python3-dev gcc spatialite-bin libsqlite3-mod-spatialite wget
 RUN pip install https://github.com/simonw/datasette/archive/master.zip
 
 # Download and import the shapefiles
-RUN wget https://github.com/evansiroky/timezone-boundary-builder/releases/download/2017c/timezones.shapefile.zip \
-    && unzip timezones.shapefile.zip && \
+RUN wget --quiet https://github.com/evansiroky/timezone-boundary-builder/releases/download/2018d/timezones-with-oceans.shapefile.zip \
+    && unzip timezones-with-oceans.shapefile.zip && \
     cd dist && \
-    echo ".loadshp combined_shapefile timezones CP1252 23032\nSELECT CreateSpatialIndex('timezones', 'geometry');" | spatialite timezones.db && \
+    echo ".loadshp combined-shapefile-with-oceans timezones CP1252 23032\nSELECT CreateSpatialIndex('timezones', 'geometry');" | spatialite timezones.db && \
     mv timezones.db .. && \
-    cd .. && rm -rf dist && rm timezones.shapefile.zip
+    cd .. && rm -rf dist && rm timezones-with-oceans.shapefile.zip
 
 ENV SQLITE_EXTENSIONS /usr/lib/x86_64-linux-gnu/mod_spatialite.so
 
