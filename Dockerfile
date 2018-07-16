@@ -3,7 +3,7 @@ FROM python:3.6-slim-stretch
 RUN apt update
 RUN apt install -y python3-dev gcc spatialite-bin libsqlite3-mod-spatialite wget unzip
 
-RUN pip install https://github.com/simonw/datasette/archive/master.zip
+RUN pip install https://github.com/simonw/datasette/archive/6e37f091.zip
 
 # Download and import the shapefiles
 RUN wget --quiet https://github.com/evansiroky/timezone-boundary-builder/releases/download/2018d/timezones-with-oceans.shapefile.zip \

@@ -12,7 +12,11 @@
                 }
             },
             "queries": {
-                "by_point": "select tzid\nfrom\n    timezones\nwhere\n    within(GeomFromText('POINT(' || :longitude || ' ' || :latitude || ')'), timezones.Geometry)\n    and rowid in (\n        SELECT pkid FROM idx_timezones_Geometry\n        where xmin < :longitude\n        and xmax > :longitude\n        and ymin < :latitude\n        and ymax > :latitude\n    )"
+                "by_point": {
+                    "sql": "select tzid\nfrom\n    timezones\nwhere\n    within(GeomFromText('POINT(' || :longitude || ' ' || :latitude || ')'), timezones.Geometry)\n    and rowid in (\n        SELECT pkid FROM idx_timezones_Geometry\n        where xmin < :longitude\n        and xmax > :longitude\n        and ymin < :latitude\n        and ymax > :latitude\n    )",
+                    "title": "Find timezone by lat/lon",
+                    "description": "Returns the timezone for a specified point on Earth"
+                }
             }
         }
     }
