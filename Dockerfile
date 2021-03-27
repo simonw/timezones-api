@@ -1,4 +1,4 @@
-FROM python:3.8-slim-stretch
+FROM python:3.9.2-slim-buster
 
 RUN apt update
 RUN apt install -y python3-dev gcc spatialite-bin libsqlite3-mod-spatialite wget unzip
