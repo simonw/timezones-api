@@ -1,4 +1,4 @@
 {
     "image": "python:3.11.1-bullseye",
-    "postCreateCommand": "apt-get update && apt-get install -y libsqlite3-mod-spatialite && pip install datasette shapefile-to-sqlite geojson-to-sqlite"
+    "postCreateCommand": "apt-get update && apt-get install -y wget jq libsqlite3-mod-spatialite && pip install datasette shapefile-to-sqlite geojson-to-sqlite"
 }
