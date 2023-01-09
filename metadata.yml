@@ -1,0 +1,70 @@
+title: Time zones API
+description: |
+  An API for looking up time zones by latitude/longitude
+about: simonw/timezones-api
+about_url: https://github.com/simonw/timezones-api
+license: ODbL
+license_url: http://opendatacommons.org/licenses/odbl/
+source: timezone-boundary-builder
+source_url: https://github.com/evansiroky/timezone-boundary-builder
+allow_sql: false
+databases:
+  timezones:
+    tables:
+      countries:
+        source: Natural Earth
+        source_url: https://www.naturalearthdata.com/
+        license: Open Data Commons Public Domain Dedication and License (PDDL) v1.0
+        license_url: https://opendatacommons.org/licenses/pddl/1-0/
+        about: geo-countries
+        about_url: https://datahub.io/core/geo-countries
+    queries:
+      by_point:
+        title: Find time zone by lat/lon
+        sql: |
+          select tzid
+          from
+            timezones
+          where
+            within(
+              MakePoint(cast(:longitude as float), cast(:latitude as float)),
+              timezones.Geometry
+            ) = 1
+            and rowid in (
+              select
+                rowid
+              from
+                SpatialIndex
+              where
+                f_table_name = 'timezones'
+                and search_frame = MakePoint(cast(:longitude as float), cast(:latitude as float))
+            )
+      by_country:
+        title: Find time zones that intersect a country
+        sql: |
+          with country as (
+            select
+              geometry
+            from
+              countries
+            where
+              admin = :country
+          )
+          select
+            timezones.tzid,
+            simplify(timezones.geometry, 0.05) as geometry
+          from
+            timezones,
+            country
+          where
+            timezones.id in (
+              select
+                SpatialIndex.rowid
+              from
+                SpatialIndex,
+                country
+              where
+                f_table_name = 'timezones'
+                and search_frame = country.geometry
+            )
+            and intersects(timezones.geometry, country.geometry) = 1

@@ -1,0 +1,5 @@
+shapefile-to-sqlite
+geojson-to-sqlite
+datasette
+datasette-geojson-map
+httpx
